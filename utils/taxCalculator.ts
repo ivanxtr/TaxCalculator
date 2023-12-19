@@ -36,6 +36,5 @@ export const taxCalculator = ({ taxBracket, income }: IPrices) => {
     }
   })
 
-  console.log({ totalTax })
   return totalTax
 }
