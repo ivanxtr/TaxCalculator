@@ -18,6 +18,8 @@ const Form = () => {
   const [isTaxDataVisible, setTaxDataVisible] = useState<boolean>(false)
   const [isDisabled, setIsDisabled] = useState<boolean>(true)
   const [showError, setShowError] = useState<boolean>(false)
+  const [taxData, setTaxData] = useState([])
+  const [taxAmount, setTaxAmount] = useState<number>(0)
 
   useMemo(async () => {
     if (!taxYear || !Number(taxYear)) return
@@ -25,7 +27,7 @@ const Form = () => {
     setIsDisabled(true)
     try {
       const response = await fetcher(URL + taxYear)
-      console.log('response', response)
+      setTaxData(response.tax_brackets)
       setButtonIsLoading(false)
       setIsDisabled(false)
     } catch (error) {
@@ -38,6 +40,8 @@ const Form = () => {
   const calculateTaxes = useCallback(async () => {
     setIsLoading(true)
     setTaxDataVisible(false)
+    /*     const taxAmount = TaxCalculator({ taxBracket: taxData, income: amount })
+    setTaxAmount(taxAmount) */
     // simulate tax processing
     setTimeout(() => {
       setIsLoading(false)
@@ -65,7 +69,7 @@ const Form = () => {
         <Button isDisabled={isDisabled} isLoading={buttonIsLoading} />
       </form>
       {isLoading && <Loader />}
-      {isTaxDataVisible && <TaxData income={amount} />}
+      {isTaxDataVisible && <TaxData income={amount} taxes={taxAmount} />}
       {showError && <ErrorUI />}
     </div>
   )

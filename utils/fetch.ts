@@ -11,7 +11,7 @@ export const fetcher = async (url: string, options?: Record<string, never>) => {
       if (data?.errors) throw new Error(data.errors[0].message)
       return data
     } catch (error) {
-      console.log(error, count)
+      // thorw error if it's the last retry
       if (count === 5)
         throw new Error('Something went wrong, please try again later' + error)
     }
