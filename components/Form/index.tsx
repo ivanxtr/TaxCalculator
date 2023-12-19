@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo, useEffect } from 'react'
 import { fetcher } from '@/utils/fetch'
+import { taxCalculator } from '@/utils/taxCalculator'
 import { URL } from '@/constants/'
 
 import Input from '@/components/Input'
@@ -18,6 +19,8 @@ const Form = () => {
   const [isTaxDataVisible, setTaxDataVisible] = useState<boolean>(false)
   const [isDisabled, setIsDisabled] = useState<boolean>(true)
   const [showError, setShowError] = useState<boolean>(false)
+  const [taxData, setTaxData] = useState([])
+  const [taxAmount, setTaxAmount] = useState<number>(0)
 
   useMemo(async () => {
     if (!taxYear || !Number(taxYear)) return
@@ -25,7 +28,7 @@ const Form = () => {
     setIsDisabled(true)
     try {
       const response = await fetcher(URL + taxYear)
-      console.log('response', response)
+      setTaxData(response?.tax_brackets)
       setButtonIsLoading(false)
       setIsDisabled(false)
     } catch (error) {
@@ -38,12 +41,14 @@ const Form = () => {
   const calculateTaxes = useCallback(async () => {
     setIsLoading(true)
     setTaxDataVisible(false)
+    const taxAmount = taxCalculator({ taxBracket: taxData, income: amount })
+    setTaxAmount(taxAmount)
     // simulate tax processing
     setTimeout(() => {
       setIsLoading(false)
       setTaxDataVisible(true)
     }, 1000)
-  }, [])
+  }, [taxData, amount])
 
   useEffect(() => {
     setShowError(false)
@@ -65,7 +70,7 @@ const Form = () => {
         <Button isDisabled={isDisabled} isLoading={buttonIsLoading} />
       </form>
       {isLoading && <Loader />}
-      {isTaxDataVisible && <TaxData income={amount} />}
+      {isTaxDataVisible && <TaxData income={amount} taxes={taxAmount} />}
       {showError && <ErrorUI />}
     </div>
   )
