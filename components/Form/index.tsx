@@ -1,34 +1,54 @@
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useEffect } from 'react'
 import { fetcher } from '@/utils/fetch'
 import { URL } from '@/constants/'
 
-import Input from '../Input'
-import Select from '../Select'
-import Button from '../Button'
-import TaxData from '../TaxData'
+import Input from '@/components/Input'
+import Select from '@/components/Select'
+import Button from '@/components/Button'
+import TaxData from '@/components/TaxData'
+import Loader from '@/components/Loader'
+import ErrorUI from '@/components/ErrorUI'
 
 const Form = () => {
-  const [isTaxDataVisible, setTaxDataVisible] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [amount, setAmount] = useState<number>(0)
   const [taxYear, setTaxYear] = useState<string>('')
-  const [buttonIsDisabled, setButtonIsDisabled] = useState<boolean>(true)
 
-  const getTaxYear = useMemo(async () => {
-    setButtonIsDisabled(true)
-    if (!taxYear) return
+  const [buttonIsLoading, setButtonIsLoading] = useState<boolean>(false)
+  const [isTaxDataVisible, setTaxDataVisible] = useState<boolean>(false)
+  const [isDisabled, setIsDisabled] = useState<boolean>(true)
+  const [showError, setShowError] = useState<boolean>(false)
+
+  useMemo(async () => {
+    if (!taxYear || !Number(taxYear)) return
+    setButtonIsLoading(true)
+    setIsDisabled(true)
     try {
       const response = await fetcher(URL + taxYear)
       console.log('response', response)
-      setButtonIsDisabled(false)
+      setButtonIsLoading(false)
+      setIsDisabled(false)
     } catch (error) {
-      console.log('error', error)
-      setButtonIsDisabled(true)
+      setIsDisabled(true)
+      setButtonIsLoading(false)
+      setShowError(true)
     }
   }, [taxYear])
 
   const calculateTaxes = useCallback(async () => {
-    if (!amount || !taxYear) return
-    setTaxDataVisible(true)
+    setIsLoading(true)
+    setTaxDataVisible(false)
+    // simulate tax processing
+    setTimeout(() => {
+      setIsLoading(false)
+      setTaxDataVisible(true)
+    }, 1000)
+  }, [])
+
+  useEffect(() => {
+    setShowError(false)
+    setTaxDataVisible(false)
+    !buttonIsLoading && setIsDisabled(!Number(taxYear))
   }, [amount, taxYear])
 
   return (
@@ -42,9 +62,11 @@ const Form = () => {
       >
         <Input callBack={setAmount} />
         <Select callBack={setTaxYear} />
-        <Button isDisabled={buttonIsDisabled} />
+        <Button isDisabled={isDisabled} isLoading={buttonIsLoading} />
       </form>
-      {isTaxDataVisible && <TaxData />}
+      {isLoading && <Loader />}
+      {isTaxDataVisible && <TaxData income={amount} />}
+      {showError && <ErrorUI />}
     </div>
   )
 }
