@@ -1,0 +1,10 @@
+{
+  "status": 500,
+  "errors": [
+    {
+      "code": "INTERNAL_SERVER_ERROR",
+      "field": "",
+      "message": "Database not found!"
+    }
+  ]
+}
