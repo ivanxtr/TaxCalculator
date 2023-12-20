@@ -1,4 +1,4 @@
-import { taxYears } from '@/constants'
+import { taxYears } from '../../constants'
 
 interface SelectProps {
   callBack: (taxYear: string) => void

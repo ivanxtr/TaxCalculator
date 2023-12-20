@@ -12,7 +12,9 @@
     "build-storybook": "storybook build",
     "test:unit": "jest",
     "test:e2e": "npx playwright test ",
-    "test:ui": "npx playwright test --ui"
+    "test:ui": "npx playwright test --ui",
+    "test-ct": "playwright test -c playwright-ct.config.ts",
+    "test:ct": "yarn run test-ct"
   },
   "dependencies": {
     "next": "14.0.4",
@@ -21,6 +23,7 @@
     "ts-jest": "^29.1.1"
   },
   "devDependencies": {
+    "@playwright/experimental-ct-react": "^1.40.1",
     "@playwright/test": "^1.40.1",
     "@storybook/addon-essentials": "^7.6.5",
     "@storybook/addon-interactions": "^7.6.5",
