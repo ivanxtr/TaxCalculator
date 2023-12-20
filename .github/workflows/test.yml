@@ -44,8 +44,6 @@ jobs:
         with:
           node-version-file: '.nvmrc'
       - name: Install yarn
-        run: npm install -g yarn && yarn
-      - name: Install dependencies
-        run: yarn
+        run: npm install -g yarn && npm i -g ts-node && yarn
       - name: Run Unit tests
         run: yarn test:unit
