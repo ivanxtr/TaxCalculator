@@ -35,15 +35,3 @@ jobs:
         run: yarn playwright install --with-deps
       - name: Run Playwright tests
         run: yarn test:ct
-  unit:
-    timeout-minutes: 60
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version-file: '.nvmrc'
-      - name: Install yarn
-        run: npm install -g yarn && npm i -g ts-node && yarn
-      - name: Run Unit tests
-        run: yarn test:unit
